@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------
+# Alertmanager Configuration
+# ---------------------------------------------------------------------------
+# Simple default configuration. In production, replace the 'null' receiver
+# with a real notification channel (Slack, PagerDuty, email, etc.).
+
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'severity']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'default-receiver'
+
+receivers:
+  - name: 'default-receiver'
+    # Null receiver — alerts are visible in the Alertmanager UI at :9093
+    # To add Slack notifications, uncomment and configure:
+    # slack_configs:
+    #   - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+    #     channel: '#alerts'
+    #     send_resolved: true
+
+inhibit_rules:
+  - source_matchers:
+      - severity = critical
+    target_matchers:
+      - severity = warning
+    equal: ['alertname']
